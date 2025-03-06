@@ -1,490 +1,306 @@
-<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="description"
-        content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos.">
-  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nerfies: Deformable Neural Radiance Fields</title>
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    function gtag() {
-      dataLayer.push(arguments);
-    }
+    <title>Neuralangelo: High-Fidelity Neural Surface Reconstruction</title>
 
-    gtag('js', new Date());
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    gtag('config', 'G-PYVRSFMDRL');
-  </script>
+    <!--FACEBOOK-->
+    <meta property="og:image" content="https://research.NVIDIA.com/labs/dir/neuralangelo/assets/gif/david.gif">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="960">
+    <meta property="og:image:height" content="540">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://research.NVIDIA.com/labs/dir/neuralangelo/" />
+    <meta property="og:title" content="Neuralangelo" />
+    <meta property="og:description"
+        content="Project page for Neuralangelo: High-Fidelity Neural Surface Reconstruction." />
 
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
+    <!--TWITTER-->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Neuralangelo" />
+    <meta name="twitter:description"
+        content="Project page for Neuralangelo: High-Fidelity Neural Surface Reconstruction." />
+    <meta name="twitter:image" content="https://research.NVIDIA.com/labs/dir/neuralangelo/assets/gif/david.gif" />
 
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css">
-  <link rel="icon" href="./static/images/favicon.svg">
+    <link rel="icon" type="image/png" href="assets/img/logo.png">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'> -->
+
+    <link rel="stylesheet" href="js/dics/dics.original.css">
+    <script src="js/dics/dics.original.js"></script>
+    <script src="js/event_handler.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata:300,400,500,600,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
-<body>
 
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="https://keunhong.com">
-      <span class="icon">
-          <i class="fas fa-home"></i>
-      </span>
-      </a>
+<body lang="en">
+    <main role="main">
 
-      <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link">
-          More Research
-        </a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="https://hypernerf.github.io">
-            HyperNeRF
-          </a>
-          <a class="navbar-item" href="https://nerfies.github.io">
-            Nerfies
-          </a>
-          <a class="navbar-item" href="https://latentfusion.github.io">
-            LatentFusion
-          </a>
-          <a class="navbar-item" href="https://photoshape.github.io">
-            PhotoShape
-          </a>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</nav>
-
-
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">Nerfies: Deformable Neural Radiance Fields</h1>
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              <a href="https://keunhong.com">Keunhong Park</a><sup>1</sup>,</span>
-            <span class="author-block">
-              <a href="https://utkarshsinha.com">Utkarsh Sinha</a><sup>2</sup>,</span>
-            <span class="author-block">
-              <a href="https://jonbarron.info">Jonathan T. Barron</a><sup>2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="http://sofienbouaziz.com">Sofien Bouaziz</a><sup>2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://www.danbgoldman.com">Dan B Goldman</a><sup>2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://homes.cs.washington.edu/~seitz/">Steven M. Seitz</a><sup>1,2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="http://www.ricardomartinbrualla.com">Ricardo Martin-Brualla</a><sup>2</sup>
-            </span>
-          </div>
-
-          <div class="is-size-5 publication-authors">
-            <span class="author-block"><sup>1</sup>University of Washington,</span>
-            <span class="author-block"><sup>2</sup>Google Research</span>
-          </div>
-
-          <div class="column has-text-centered">
-            <div class="publication-links">
-              <!-- PDF Link. -->
-              <span class="link-block">
-                <a href="https://arxiv.org/pdf/2011.12948"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fas fa-file-pdf"></i>
-                  </span>
-                  <span>Paper</span>
-                </a>
-              </span>
-              <span class="link-block">
-                <a href="https://arxiv.org/abs/2011.12948"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv</span>
-                </a>
-              </span>
-              <!-- Video Link. -->
-              <span class="link-block">
-                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-youtube"></i>
-                  </span>
-                  <span>Video</span>
-                </a>
-              </span>
-              <!-- Code Link. -->
-              <span class="link-block">
-                <a href="https://github.com/google/nerfies"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-github"></i>
-                  </span>
-                  <span>Code</span>
-                  </a>
-              </span>
-              <!-- Dataset Link. -->
-              <span class="link-block">
-                <a href="https://github.com/google/nerfies/releases/tag/0.1"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="far fa-images"></i>
-                  </span>
-                  <span>Data</span>
-                  </a>
+        <section class="jumbotron text-center" id="banner">
+            <div class="container" id="title">
+                <h2 class="jumbotron-heading">
+                    <span id="name">Neuralangelo</span>: High-Fidelity Neural Surface Reconstruction
+                </h2>
             </div>
 
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+            <div class="container" style="max-width: 840px;">
+                <div class="row row-author" style="margin: 0 70px 0 70px;">
+                    <div class="col-md author"><a href="https://mli0603.github.io/" target="_blank">Zhaoshuo
+                            Li</a><sup>1,2</sup></div>
+                    <div class="col-md author"><a href="https://tom94.net/" target="_blank">Thomas
+                            M&uumlller</a><sup>1</sup></div>
+                    <div class="col-md author"><a href="https://research.NVIDIA.com/person/alex-evans"
+                            target="_blank">Alex Evans</a><sup>1</sup></div>
+                    <div class="col-md author"><a href="https://www.cs.jhu.edu/~rht/" target="_blank">Russell H.
+                            Taylor</a><sup>2</sup></div>
+                </div>
 
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video id="teaser" autoplay muted loop playsinline height="100%">
-        <source src="./static/videos/teaser.mp4"
-                type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
-        free-viewpoint
-        portraits.
-      </h2>
-    </div>
-  </div>
-</section>
+                <div class="row row-author" style="margin: 0 70px 0 70px;">
+                    <div class="col-md author"><a href="https://mathiasunberath.github.io/" target="_blank">Mathias
+                            Unberath</a><sup>2</sup></div>
+                    <div class="col-md author"><a href="https://mingyuliu.net/" target="_blank">Ming-Yu
+                            Liu</a><sup>1</sup></div>
+                    <div class="col-md author"><a href="https://chenhsuanlin.bitbucket.io/" target="_blank">Chen-Hsuan
+                            Lin</a><sup>1</sup></div>
+                </div>
 
-
-<section class="hero is-light is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-steve">
-          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/steve.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-chair-tp">
-          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/chair-tp.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-shiba">
-          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/shiba.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-fullbody">
-          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/fullbody.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-blueshirt">
-          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/blueshirt.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-mask">
-          <video poster="" id="mask" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/mask.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-coffee">
-          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/coffee.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-toby">
-          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/toby2.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container is-max-desktop">
-    <!-- Abstract. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            We present the first method capable of photorealistically reconstructing a non-rigidly
-            deforming scene using photos/videos captured casually from mobile phones.
-          </p>
-          <p>
-            Our approach augments neural radiance fields
-            (NeRF) by optimizing an
-            additional continuous volumetric deformation field that warps each observed point into a
-            canonical 5D NeRF.
-            We observe that these NeRF-like deformation fields are prone to local minima, and
-            propose a coarse-to-fine optimization method for coordinate-based models that allows for
-            more robust optimization.
-            By adapting principles from geometry processing and physical simulation to NeRF-like
-            models, we propose an elastic regularization of the deformation field that further
-            improves robustness.
-          </p>
-          <p>
-            We show that <span class="dnerf">Nerfies</span> can turn casually captured selfie
-            photos/videos into deformable NeRF
-            models that allow for photorealistic renderings of the subject from arbitrary
-            viewpoints, which we dub <i>"nerfies"</i>. We evaluate our method by collecting data
-            using a
-            rig with two mobile phones that take time-synchronized photos, yielding train/validation
-            images of the same pose at different viewpoints. We show that our method faithfully
-            reconstructs non-rigidly deforming scenes and reproduces unseen views with high
-            fidelity.
-          </p>
-        </div>
-      </div>
-    </div>
-    <!--/ Abstract. -->
-
-    <!-- Paper video. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Video</h2>
-        <div class="publication-video">
-          <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0"
-                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-      </div>
-    </div>
-    <!--/ Paper video. -->
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container is-max-desktop">
-
-    <div class="columns is-centered">
-
-      <!-- Visual Effects. -->
-      <div class="column">
-        <div class="content">
-          <h2 class="title is-3">Visual Effects</h2>
-          <p>
-            Using <i>nerfies</i> you can create fun visual effects. This Dolly zoom effect
-            would be impossible without nerfies since it would require going through a wall.
-          </p>
-          <video id="dollyzoom" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/dollyzoom-stacked.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-      </div>
-      <!--/ Visual Effects. -->
-
-      <!-- Matting. -->
-      <div class="column">
-        <h2 class="title is-3">Matting</h2>
-        <div class="columns is-centered">
-          <div class="column content">
-            <p>
-              As a byproduct of our method, we can also solve the matting problem by ignoring
-              samples that fall outside of a bounding box during rendering.
-            </p>
-            <video id="matting-video" controls playsinline height="100%">
-              <source src="./static/videos/matting.mp4"
-                      type="video/mp4">
-            </video>
-          </div>
-
-        </div>
-      </div>
-    </div>
-    <!--/ Matting. -->
-
-    <!-- Animation. -->
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Animation</h2>
-
-        <!-- Interpolating. -->
-        <h3 class="title is-4">Interpolating states</h3>
-        <div class="content has-text-justified">
-          <p>
-            We can also animate the scene by interpolating the deformation latent codes of two input
-            frames. Use the slider here to linearly interpolate between the left frame and the right
-            frame.
-          </p>
-        </div>
-        <div class="columns is-vcentered interpolation-panel">
-          <div class="column is-3 has-text-centered">
-            <img src="./static/images/interpolate_start.jpg"
-                 class="interpolation-image"
-                 alt="Interpolate start reference image."/>
-            <p>Start Frame</p>
-          </div>
-          <div class="column interpolation-video-column">
-            <div id="interpolation-image-wrapper">
-              Loading...
+                <div class="row" style="margin-top:0.5rem; margin-left: auto; margin-right: auto;">
+                    <div class="col-md">
+                        <div id="affiliation">
+                            <sup>1</sup>NVIDIA Corporation &nbsp;&nbsp;&nbsp;&nbsp; <sup>2</sup>Johns Hopkins University</h9>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <input class="slider is-fullwidth is-large is-info"
-                   id="interpolation-slider"
-                   step="1" min="0" max="100" value="0" type="range">
-          </div>
-          <div class="column is-3 has-text-centered">
-            <img src="./static/images/interpolate_end.jpg"
-                 class="interpolation-image"
-                 alt="Interpolation end reference image."/>
-            <p class="is-bold">End Frame</p>
-          </div>
-        </div>
-        <br/>
-        <!--/ Interpolating. -->
 
-        <!-- Re-rendering. -->
-        <h3 class="title is-4">Re-rendering the input video</h3>
-        <div class="content has-text-justified">
-          <p>
-            Using <span class="dnerf">Nerfies</span>, you can re-render a video from a novel
-            viewpoint such as a stabilized camera by playing back the training deformations.
-          </p>
-        </div>
-        <div class="content has-text-centered">
-          <video id="replay-video"
-                 controls
-                 muted
-                 preload
-                 playsinline
-                 width="75%">
-            <source src="./static/videos/replay.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <!--/ Re-rendering. -->
+            <div id="venue">
+                IEEE Conference on Computer Vision and Pattern Recognition (<b>CVPR</b>), 2023<br><br>
+                <a href="https://time.com/collection/best-inventions-2023/6324133/neuralangelo/"><span id="highlight">TIME's Best Inventions of 2023</span></a>
+            </div>
 
-      </div>
+            <div class="buttons">
+                <a href="https://arxiv.org/abs/2306.03092" target="_blank" class="btn btn-primary my-2">Paper (arXiv)</a>
+                <a href="paper.pdf" target="_blank" class="btn btn-primary my-2">Paper</a>
+                <a href="supplementary.pdf" target="_blank" class="btn btn-primary my-2">Supplementary</a>
+                <a href="https://github.com/nvlabs/neuralangelo" target="_blank" class="btn btn-primary1 my-2">Code</a>
+                <a href="https://colab.research.google.com/drive/1JD9CpAPteg_JsxneB1B-0XX-pZpybuEj" target="_blank" class="btn btn-primary1 my-2">Colab notebook</a>
+            </div>
+
+            <div class="container">
+                <div class="row" id="pitch">
+                    <p style="text-align: center;">
+                        Neuralangelo is a framework for high-fidelity 3D surface reconstruction from RGB video captures.
+                        Using ubiquitous mobile devices, we enable users to create digital twins of both object-centric and large-scale real-world scenes with highly detailed 3D geometry.
+                    </p>
+                </div>
+                <div class="row" id="inquiries">
+                    <p style="text-align: center;">
+                        For business inquiries, please visit our website and submit the form: <a href="https://www.nvidia.com/en-us/research/inquiries/">NVIDIA Research Licensing</a>.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <div style="padding: 60px 0 10px 0; text-align: center; font-size: 90%;">
+        (best viewed with Google Chrome on a desktop/laptop)
     </div>
-    <!--/ Animation. -->
 
+    <div class="container" style="padding-top: 30px;">
 
-    <!-- Concurrent Work. -->
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Related Links</h2>
+        <!-- Abstract -->
+        <h5>Abstract</h5>
+        <p style="text-align: justify;">
+            Neural surface reconstruction has shown to be powerful for recovering dense 3D surfaces via image-based neural rendering.
+            However, current methods struggle to recover detailed structures of real-world scenes.
+            To address the issue, we present Neuralangelo, which combines the representation power of multi-resolution 3D hash grids with neural surface rendering.
+            Our approach is enabled by two key ingredients: (1) numerical gradients for computing higher-order derivatives as a smoothing operation and (2) coarseto-fine optimization on the hash grids controlling different levels of details.
+            Even without auxiliary depth, Neuralangelo can effectively recover dense 3D surface structures from multi-view images with a fidelity that significantly surpasses previous methods, enabling detailed large-scale scene reconstruction from RGB video captures.
+        </p>
 
-        <div class="content has-text-justified">
-          <p>
-            There's a lot of excellent work that was introduced around the same time as ours.
-          </p>
-          <p>
-            <a href="https://arxiv.org/abs/2104.09125">Progressive Encoding for Neural Optimization</a> introduces an idea similar to our windowed position encoding for coarse-to-fine optimization.
-          </p>
-          <p>
-            <a href="https://www.albertpumarola.com/research/D-NeRF/index.html">D-NeRF</a> and <a href="https://gvv.mpi-inf.mpg.de/projects/nonrigid_nerf/">NR-NeRF</a>
-            both use deformation fields to model non-rigid scenes.
-          </p>
-          <p>
-            Some works model videos with a NeRF by directly modulating the density, such as <a href="https://video-nerf.github.io/">Video-NeRF</a>, <a href="https://www.cs.cornell.edu/~zl548/NSFF/">NSFF</a>, and <a href="https://neural-3d-video.github.io/">DyNeRF</a>
-          </p>
-          <p>
-            There are probably many more by the time you are reading this. Check out <a href="https://dellaert.github.io/NeRF/">Frank Dellart's survey on recent NeRF papers</a>, and <a href="https://github.com/yenchenlin/awesome-NeRF">Yen-Chen Lin's curated list of NeRF papers</a>.
-          </p>
+        <!-- Summary video -->
+        <hr>
+        <h5>Video</h5>
+        <div style="text-align: center;">
+            <!-- <iframe width=860 height=484 class="large_video" src="https://www.youtube.com/embed/dCmCZs2Hpi0" frameborder=0></iframe> -->
+            <video width=100% class="large_video" controls><source src="assets/video.mp4" type="video/mp4">X</video>
         </div>
-      </div>
-    </div>
-    <!--/ Concurrent Work. -->
 
-  </div>
-</section>
-
-
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code>@article{park2021nerfies,
-  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
-  title     = {Nerfies: Deformable Neural Radiance Fields},
-  journal   = {ICCV},
-  year      = {2021},
-}</code></pre>
-  </div>
-</section>
-
-
-<footer class="footer">
-  <div class="container">
-    <div class="content has-text-centered">
-      <a class="icon-link"
-         href="./static/videos/nerfies_paper.pdf">
-        <i class="fas fa-file-pdf"></i>
-      </a>
-      <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
-        <i class="fab fa-github"></i>
-      </a>
-    </div>
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-          <p>
-            This website is licensed under a <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-          <p>
-            This means you are free to borrow the <a
-              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
-            we just ask that you link back to this page in the footer.
-            Please remember to remove the analytics code included in the header of the website which
-            you do not want on your website.
-          </p>
+        <!-- Large-scale reconstruction -->
+        <hr>
+        <h5>Large-scale Reconstruction</h5>
+        <div class="container">
+            <ul class="nav nav-tabs nav-fill nav-justified" id="large-scale-recon-1">
+                <li class="nav-item">
+                    <a class="nav-link active" onclick="largeSceneEvent(0)">NVIDIA HQ Park</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="largeSceneEvent(1)">Johns Hopkins University</a>
+                </li>
+            </ul>
+            <ul class="nav nav-tabs nav-fill nav-justified" id="large-scale-recon-2">
+                <li class="nav-item">
+                    <a class="nav-link" onclick="largeSceneEvent(2)">Barn</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="largeSceneEvent(3)">Caterpillar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="largeSceneEvent(4)">Courthouse</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="largeSceneEvent(5)">Ignatius</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="largeSceneEvent(6)">Meetingroom</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="largeSceneEvent(7)">Truck</a>
+                </li>
+            </ul>
+            <div class="b-dics" style="width: 3000px">
+                <img src="assets/img/nvidia/rgb.png" alt="RGB view synthesis">
+                <img src="assets/img/nvidia/mesh.png" alt="3D surface reconstruction">
+                <img src="assets/img/nvidia/normal.png" alt="Surface normal">
+            </div>
         </div>
-      </div>
+
+        <!-- Object-centric reconstruction -->
+        <hr>
+        <h5>Object-centric Reconstruction</h5>
+        <div class="container">
+            <ul class="nav nav-tabs nav-fill nav-justified" id="object-scale-recon">
+                <li class="nav-item">
+                    <a class="nav-link active" onclick="objectSceneEvent(0)">Scan24</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="objectSceneEvent(1)">Scan37</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="objectSceneEvent(2)">Scan40</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="objectSceneEvent(3)">Scan63</a>
+                </li>
+            </ul>
+            <div class="b-dics" style="width: 3000px; font-weight: 600;">
+                <img src="assets/img/dtu24/neus.png" alt="NeuS">
+                <img src="assets/img/dtu24/ours.png" alt="Neuralangelo (Ours)">
+                <img src="assets/img/dtu24/neuralwarp.png" alt="NeuralWarp">
+            </div>
+        </div>
+
+        <!-- Approach -->
+        <hr>
+        <h5>Approach</h5>
+        <div class="container">
+            <div>
+                Neuralangelo builds on top of <a href="https://nvlabs.github.io/instant-ngp/">multi-resolution hash encoding</a> and
+                <a href="https://lingjie0206.github.io/papers/NeuS/">SDF-based volume rendering</a>.
+            </div>
+
+            <div>
+                <br>
+                <h6>1.&nbsp;&nbsp;Numerical gradients to compute higher-order derivatives</h6>
+                <div class="approach_text">
+                    Using numerical gradients with step size matching the spatial resolutions of hash grid optimizes beyond the local cells. The numerical gradients act as a smoothing operation on the SDF in comparison to the analytical gradients.
+                </div>
+                <div class="text-center">
+                    <video width=90% class="approach_video" controls autoplay muted loop>
+                        <source src="assets/numerical_gradient.mp4" type="video/mp4">
+                    </video>
+                </div>
+
+                <br>
+                <h6>2.&nbsp;&nbsp;Progressive level of details</h6>
+                <div class="approach_text">
+                    By progressively decreasing the step size for numerical gradient and enabling higher resolution hash grids, the optimization landscape is better shaped to recover both large smooth surfaces and fine geometric details. Such a learning curriculum enables progressive level of details.
+                </div>
+                <div class="text-center">
+                    <video width=90% class="approach_video" controls autoplay muted loop>
+                        <source src="assets/coarse_to_fine.mp4" type="video/mp4">
+                    </video>
+                </div>
+
+                <br>
+                <h6>3.&nbsp;&nbsp;Optimization</h6>
+                <div class="approach_text">
+                    Neuralangelo uses three optimization objectives:
+                    $$\mathcal{L} = \mathcal{L}_{rgb} + w_\text{eik} \mathcal{L}_{eik} + w_\text{curv}
+                    \mathcal{L}_{curv}.$$
+
+                    <ul>
+                        <li>RGB synthesis loss \( \mathcal{L}_{rgb} \) : &nbsp;RGB reconstruction loss between the input image and synthesized images.</li>
+                        <li>Eikonal loss \( \mathcal{L}_{eik} \) : &nbsp;regularize underlying SDF such that the surface normals are unit-norm.</li>
+                        <li>Curvature loss \( \mathcal{L}_{curv} \) : &nbsp;regularize underlying SDF such that the mean-curvature is not arbitrarily large.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CVPR video -->
+        <hr>
+        <h5>Presentation</h5>
+        <div style="text-align: center;">
+            <iframe width=100% height=486 class="large_video" src="https://www.youtube.com/embed/Qpdw3SW54kI" frameborder=0></iframe>
+        </div>
+
+        <!-- poster -->
+        <hr>
+        <h5>Poster</h5>
+        <div style="text-align: center;">
+            <div class="enlarge">(Click image to enlarge)</div>
+            <a href="poster.pdf" target="_blank"><img src="poster.png" width=800></a>
+        </div>
+
+        <!-- Citation -->
+        <hr>
+        <h5>Citation</h5>
+        <div class="row">
+            <div id="citation">
+                @inproceedings{li2023neuralangelo,<br>
+                &nbsp;&nbsp;title={Neuralangelo: High-Fidelity Neural Surface Reconstruction},<br>
+                &nbsp;&nbsp;author={Li, Zhaoshuo and M\"uller, Thomas and Evans, Alex and Taylor, Russell H and Unberath, Mathias and Liu, Ming-Yu and Lin, Chen-Hsuan},<br>
+                &nbsp;&nbsp;booktitle={IEEE Conference on Computer Vision and Pattern Recognition ({CVPR})},<br>
+                &nbsp;&nbsp;year={2023}<br>
+                }
+            </div>
+        </div>
+
     </div>
-  </div>
-</footer>
+    <script src="js/jquery.js"></script>
+
+    <!-- Default Statcounter code for Neuralangelo
+    https://research.nvidia.com/labs/dir/neuralangelo/ -->
+    <script type="text/javascript">
+    var sc_project=12819112; 
+    var sc_invisible=1; 
+    var sc_security="71c1464a"; 
+    </script>
+    <script type="text/javascript"
+    src="https://www.statcounter.com/counter/counter.js"
+    async></script>
+    <noscript><div class="statcounter"><a title="Web Analytics"
+    href="https://statcounter.com/" target="_blank"><img
+    class="statcounter"
+    src="https://c.statcounter.com/12819112/0/71c1464a/1/"
+    alt="Web Analytics"
+    referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+    <!-- End of Statcounter Code -->
 
 </body>
+
 </html>
