@@ -259,16 +259,7 @@ input RGB images collected by the drone.
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Neural surface reconstruction (NSR) has been shown to have huge potential for 3D reconstruction from multiview images. However, current NSR methods struggle to reconstruct high-quality surfaces due to severe shape-radiance ambiguities when they meet the large-scale scenes captured from aircraft or UAVs, which often contain heavy shadows, illumination variations, and low texture areas.
-          </p>
-          <p>
-            We present MegaSurf, which efficiently and robustly integrates Multiview Stereo (MVS) priors to solve large geometric errors due to the intrinsic shape-radiance ambiguity while preserving high-precision details.
-          </p>
-          <p>
-            Specifically, we propose a lightweight MVS module to rapidly diffuse high-confidence planar geometric information from structure-from-motion (SFM) points, where ambiguities often occur, to guide the NSR. Further, we propose a two-stage sampling-guided NSR approach. We pre-train a sampling proposal network using MVS priors to indicate the next stage sampling position and let these positions represent the scene first at the next stage of training. This strategy helps to overcome large geometric errors due to ambiguity while preserving the high-fidelity details.
-          </p>
-          <p>
-            Our MegaSurf improves the speed of prior acquisition by more than four times that of the SOTA MVS methods and achieves the best reconstruction accuracy on large-scale datasets compared to previous methods.
+            3D Gaussian Splatting (3DGS) has emerged as a promising technique for novel view synthesis in computer graphics, offering superior flexibility and quality compared to traditional voxel-based and mesh-based methods. However, strong artifacts can be observed when changing the sampling rate, eg., by changing focal length or camera distance; In addition, all Gaussians within the field of view need to participate in rendering, leading to a lack of flexibility in the rendering approach. To address these challenges, we propose a novel hierarchical 3DGS representation that establishes a LOD (Level of Detail) structure for the scene. During the model training phase, we create different layers for various sampling rates, with higher GS layers derived from lower ones. In the rendering phase, our method adaptively selects the Gaussians involved in rendering based on the sampling rate, thereby enhancing rendering efficiency. Additionally, we establish recursive relationships between different levels, allowing higher layers to be inferred from lower layers, significantly reducing model storage requirements. In summary, our approach demonstrates significant improvements in both rendering quality and model storage efficiency compared to existing methods.
           </p>
         </div>
       </div>
